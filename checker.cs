@@ -1,34 +1,104 @@
 using System;
-using System.Diagnostics;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-class Checker
+namespace MyVital_Exercise
 {
-    static bool vitalsAreOk(float bpm, float spo2, float respRate) {
-        if(bpm < 70 || bpm > 150) {
-            return false;
-        } else if(spo2 < 90) {
-            return false;
-        } else if(respRate < 30 || respRate > 95) {
-            return false;
-        }
-        return true;
+    public class AlertVitals {
+        
+        public  Dictionary<string, double> lower_limit = new Dictionary<string, double>() {
+            { "BPM", 70.00}, { "RespRate", 30.00}, {"SPO2", 90.00 }
+        };
+
+        public  Dictionary<string, double> upper_limit = new Dictionary<string, double>() {
+            { "BPM", 150.00}, { "RespRate", 95.00}, {"SPO2", 101.00 }
+        };
     }
-    static void ExpectTrue(bool expression) {
-        if(!expression) {
-            Console.WriteLine("Expected true, but got false");
-            Environment.Exit(1);
+
+    public class Alert {
+        public string Message;
+        public bool status;
+    }
+
+    class VitalsCheck {
+        public  Alert VitalIsOk(AlertVitals av, string vital_name ,int value) {
+            Alert alrt = new Alert();
+
+            if (av.lower_limit.ContainsKey(vital_name) == false) {
+                //Console.WriteLine("Please check entered Vitals / WRONG vital is entered");
+                alrt.status = false;
+                alrt.Message = "Please check entered Vitals / WRONG vital is entered";
+                return alrt;
+            }
+
+            else if (av.lower_limit[vital_name] > value)
+            {
+                alrt.status = false;
+                alrt.Message = vital_name + " is Low..!!";
+                return alrt;
+            }
+
+            else if (av.upper_limit[vital_name] < value) {
+                alrt.status = false;
+                alrt.Message =  vital_name+" is High..!!";
+                return alrt;
+            }
+            else {
+                alrt.status = true;
+                alrt.Message = "Vital status is good..";
+                return alrt;
+            }
+             
         }
     }
-    static void ExpectFalse(bool expression) {
-        if(expression) {
-            Console.WriteLine("Expected false, but got true");
-            Environment.Exit(1);
+
+    public class alertPrint {
+        public  void printAlert(Alert alrt) {
+            Console.WriteLine(alrt.Message);
         }
     }
-    static int Main() {
-        ExpectTrue(vitalsAreOk(100, 95, 60));
-        ExpectFalse(vitalsAreOk(40, 91, 92));
-        Console.WriteLine("All ok");
-        return 0;
+
+
+    class Program
+    {
+        static void ExpectTrue(Alert result)
+        {
+            if (!(result.status))
+            {
+                Console.WriteLine("Expected true, but got false");
+                Environment.Exit(1);
+            }
+        }
+        static void ExpectFalse(Alert result)
+        {
+            if (result.status)
+            {
+                Console.WriteLine("Expected false, but got true");
+                Environment.Exit(1);
+            }
+        }
+
+        static void Main(string[] args)
+        {
+            alertPrint p = new alertPrint();
+            VitalsCheck vc = new VitalsCheck();
+            AlertVitals av = new AlertVitals();
+
+           
+            p.printAlert(vc.VitalIsOk(av, "SPO2",95 ));
+            p.printAlert(vc.VitalIsOk(av, "SPO2", 88));
+            p.printAlert(vc.VitalIsOk(av, "BPM", 160));
+            p.printAlert(vc.VitalIsOk(av, "RespRate", 40));
+            p.printAlert(vc.VitalIsOk(av, "BPM", 111));
+
+            p.printAlert(vc.VitalIsOk(av, "Sugar", 111)); //handelling Unknown vital
+            
+            ExpectTrue(vc.VitalIsOk(av, "RespRate", 50));
+            ExpectFalse(vc.VitalIsOk(av, "RespRate", 100));
+            Console.WriteLine("All ok");
+
+        }
     }
 }
