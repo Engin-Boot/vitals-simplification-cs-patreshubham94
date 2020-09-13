@@ -45,11 +45,11 @@ namespace MyVital_Exercise
                 alrt.Message =  vital_name+" is High..!!";
                 return alrt;
             }
-            else {
+           
                 alrt.status = true;
-                alrt.Message = "Vital status is good..";
+                alrt.Message = vital_name+" status is good..";
                 return alrt;
-            }
+           
              
         }
     }
@@ -100,5 +100,5 @@ namespace MyVital_Exercise
             Console.WriteLine("All ok");
 
         }
-    }
+    }   
 }
