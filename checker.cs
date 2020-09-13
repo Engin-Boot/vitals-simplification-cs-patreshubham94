@@ -26,14 +26,14 @@ namespace MyVital_Exercise
         public  Alert VitalIsOk(AlertVitals av, string vital_name ,int value) {
             Alert alrt = new Alert();
 
-            if (av.lower_limit.ContainsKey(vital_name) == false) {
-                //Console.WriteLine("Please check entered Vitals / WRONG vital is entered");
-                alrt.status = false;
-                alrt.Message = "Please check entered Vitals / WRONG vital is entered";
-                return alrt;
-            }
+            //if (av.lower_limit.ContainsKey(vital_name) == false) {
+            //    //Console.WriteLine("Please check entered Vitals / WRONG vital is entered");
+            //    alrt.status = false;
+            //    alrt.Message = "Please check entered Vitals / WRONG vital is entered";
+            //    return alrt;
+            //}
 
-            else if (av.lower_limit[vital_name] > value)
+            if (av.lower_limit[vital_name] > value)
             {
                 alrt.status = false;
                 alrt.Message = vital_name + " is Low..!!";
@@ -93,7 +93,7 @@ namespace MyVital_Exercise
             p.printAlert(vc.VitalIsOk(av, "RespRate", 40));
             p.printAlert(vc.VitalIsOk(av, "BPM", 111));
 
-            p.printAlert(vc.VitalIsOk(av, "Sugar", 111)); //handelling Unknown vital
+           // p.printAlert(vc.VitalIsOk(av, "Sugar", 111)); //handelling Unknown vital
             
             ExpectTrue(vc.VitalIsOk(av, "RespRate", 50));
             ExpectFalse(vc.VitalIsOk(av, "RespRate", 100));
