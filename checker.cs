@@ -27,10 +27,6 @@ namespace MyVital_Exercise
     {
         public Alert VitalAreOk(AlertVitals av, string vital_name, Alert alrt, int value)
         {
-            //Alert alrt = new Alert();
-            //abnormalVitals abv = new abnormalVitals();
-
-            //alrt = abv.handleAbnormalVital(av, vital_name, alrt);
 
             if (av.lower_limit[vital_name] > value)
             {
