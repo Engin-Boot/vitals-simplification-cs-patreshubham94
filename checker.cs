@@ -7,12 +7,12 @@ using System.Threading.Tasks;
 namespace MyVital_Exercise
 {
     public class AlertVitals {
-        
-        public  Dictionary<string, double> lower_limit = new Dictionary<string, double>() {
+
+        public Dictionary<string, double> lower_limit = new Dictionary<string, double>() {
             { "BPM", 70.00}, { "RespRate", 30.00}, {"SPO2", 90.00 }
         };
 
-        public  Dictionary<string, double> upper_limit = new Dictionary<string, double>() {
+        public Dictionary<string, double> upper_limit = new Dictionary<string, double>() {
             { "BPM", 150.00}, { "RespRate", 95.00}, {"SPO2", 101.00 }
         };
     }
@@ -22,16 +22,15 @@ namespace MyVital_Exercise
         public bool status;
     }
 
-    class VitalsCheck {
-        public  Alert VitalIsOk(AlertVitals av, string vital_name ,int value) {
-            Alert alrt = new Alert();
 
-            //if (av.lower_limit.ContainsKey(vital_name) == false) {
-            //    //Console.WriteLine("Please check entered Vitals / WRONG vital is entered");
-            //    alrt.status = false;
-            //    alrt.Message = "Please check entered Vitals / WRONG vital is entered";
-            //    return alrt;
-            //}
+    class VitalsCheck
+    {
+        public Alert VitalAreOk(AlertVitals av, string vital_name, Alert alrt, int value)
+        {
+            //Alert alrt = new Alert();
+            //abnormalVitals abv = new abnormalVitals();
+
+            //alrt = abv.handleAbnormalVital(av, vital_name, alrt);
 
             if (av.lower_limit[vital_name] > value)
             {
@@ -40,19 +39,43 @@ namespace MyVital_Exercise
                 return alrt;
             }
 
-            else if (av.upper_limit[vital_name] < value) {
+            else if (av.upper_limit[vital_name] < value)
+            {
                 alrt.status = false;
-                alrt.Message =  vital_name+" is High..!!";
+                alrt.Message = vital_name + " is High..!!";
                 return alrt;
             }
-           
-                alrt.status = true;
-                alrt.Message = vital_name+" status is good..";
-                return alrt;
-           
-             
+
+            alrt.status = true;
+            alrt.Message = vital_name + " status is good..";
+            return alrt;
+
+
         }
     }
+
+    public class abnormalVitals {
+
+        public Alert VitalIsOk(AlertVitals av, string vital_name, int value) {
+
+            Alert alrt = new Alert();
+            VitalsCheck vc = new VitalsCheck();
+
+            if (av.lower_limit.ContainsKey(vital_name) == false)
+            {
+                //Console.WriteLine("Please check entered Vitals / WRONG vital is entered");
+                alrt.status = false;
+                alrt.Message = vital_name + " vital is not present in list / WRONG vital is entered.. !";
+
+            }
+            else {
+                alrt = vc.VitalAreOk(av, vital_name, alrt, value);
+            }
+            return alrt;
+        }
+    }
+
+    
 
     public class alertPrint {
         public  void printAlert(Alert alrt) {
@@ -85,18 +108,19 @@ namespace MyVital_Exercise
             alertPrint p = new alertPrint();
             VitalsCheck vc = new VitalsCheck();
             AlertVitals av = new AlertVitals();
+            abnormalVitals abv = new abnormalVitals();
 
-           
-            p.printAlert(vc.VitalIsOk(av, "SPO2",95 ));
-            p.printAlert(vc.VitalIsOk(av, "SPO2", 88));
-            p.printAlert(vc.VitalIsOk(av, "BPM", 160));
-            p.printAlert(vc.VitalIsOk(av, "RespRate", 40));
-            p.printAlert(vc.VitalIsOk(av, "BPM", 111));
 
-           // p.printAlert(vc.VitalIsOk(av, "Sugar", 111)); //handelling Unknown vital
+            p.printAlert(abv.VitalIsOk(av, "SPO2",95 ));
+            p.printAlert(abv.VitalIsOk(av, "SPO2", 88));
+            p.printAlert(abv.VitalIsOk(av, "BPM", 160));
+            p.printAlert(abv.VitalIsOk(av, "RespRate", 40));
+            p.printAlert(abv.VitalIsOk(av, "BPM", 111));
+
+            p.printAlert(abv.VitalIsOk(av, "Sugar", 111)); //handelling Unknown vital
             
-            ExpectTrue(vc.VitalIsOk(av, "RespRate", 50));
-            ExpectFalse(vc.VitalIsOk(av, "RespRate", 100));
+            ExpectTrue(abv.VitalIsOk(av, "RespRate", 50));
+            ExpectFalse(abv.VitalIsOk(av, "RespRate", 100));
             Console.WriteLine("All ok");
 
         }
